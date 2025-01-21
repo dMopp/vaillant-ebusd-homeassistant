@@ -1,0 +1,76 @@
+mqtt:
+  ###Heizung
+  climate:
+    - name: "Vaillant EcoTEC Plus"
+      unique_id: vaillant_ecotec_plus
+      max_temp: 25
+      min_temp: 18
+      temp_step: 0.5
+      precision: 0.1
+      modes:
+        - "auto"
+        - "heat"
+        - "cool"
+        - "off"
+
+      action_topic: "ebusd/700/Z1OpMode"
+      action_template: >-
+        {% set values = { 'day':'heating', 'off':'off', 'auto':'auto' , 'night':'cooling' } %}
+        {% set val = value_json.value.value %}
+        {{ values[val] if val in values.keys() else 'off' }}
+
+      mode_state_template: >-
+        {% set values = { 'day':'heat', 'auto':'auto',  'night':'cool', 'off':'off' } %}
+        {% set val = value_json.value.value %}
+        {{ values[val] if val in values.keys() else 'off' }}
+      mode_state_topic: "ebusd/700/Z1OpMode"
+
+      mode_command_template: >-
+        {% set values = { 'day':'heat', 'auto':'auto', 'night':'cool', 'off':'off' } %}
+        {% set val = value_json.value.value %}
+        {{ values[val] if val in values.keys() else 'heat' }}
+      mode_command_topic: "ebusd/700/Z1OpMode/set"
+
+      current_temperature_template: "{{ value_json }}"
+      current_temperature_topic: "homeassistant/sensor/durchschnittliche_raumtemperatur"
+
+      temperature_state_template: "{{ value_json.value.value }}"
+      temperature_state_topic: "ebusd/700/Z1ActualRoomTempDesired"
+
+      temperature_low_state_template: "{{ value_json.value.value }}"
+      temperature_low_state_topic: "ebusd/700/Z1NightTemp"
+      temperature_low_command_topic: "ebusd/700/Z1NightTemp/set"
+
+      temperature_high_state_template: "{{ value_json.value.value }}"
+      temperature_high_state_topic: "ebusd/700/Z1DayTemp"
+      temperature_high_command_topic: "ebusd/700/Z1DayTemp/set"
+
+    ###Warmwasser
+    - name: "Vaillant EcoTEC Plus Warmwasser"
+      unique_id: vaillant_ecotec_plus_warmwasser
+      max_temp: 90
+      min_temp: 45
+      temp_step: 1
+      precision: 0.1
+      action_topic: "ebusd/700/HwcOpMode"
+      action_template: "{{ value_json.value.value }}"
+      modes:
+        - auto
+        - "off"
+      mode_state_template: >-
+        {% set values = { 'auto':'auto', 'off':'off'} %}
+        {{ values[value] if value in values.keys() else 'auto' }}
+      mode_state_topic: "ebusd/700/HwcOpMode"
+
+      mode_command_template: >-
+        {% set values = { 'auto':'auto', 'off':'off'} %}
+        {{ values[value] if value in values.keys() else 'auto' }}
+      mode_command_topic: "ebusd/700/HwcOpMode/set"
+
+      temperature_high_state_template: "{{ value_json.value.value }}"
+      temperature_high_state_topic: "ebusd/700/HwcTempDesired"
+
+      temperature_high_command_topic: "ebusd/700/HwcTempDesired/set"
+
+      current_temperature_topic: "ebusd/vr_71/SensorData1"
+      current_temperature_template: "{{ value_json.s5.value }}"
