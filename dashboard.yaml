@@ -1,0 +1,151 @@
+views:
+  - title: Home
+    visible:
+      - user: 721f354368864cd7a22babca9e538a69
+      - user: 35be36d8e17f4ce7915f8893851f7f28
+      - user: faef4f741f97441a8312343a7828c062
+    type: sidebar
+    badges: []
+    cards:
+      - type: thermostat
+        entity: climate.vaillant_ecotec_plus
+        features:
+          - style: icons
+            hvac_modes:
+              - heat
+              - 'off'
+              - auto
+              - cool
+            type: climate-hvac-modes
+        show_current_as_primary: true
+      - type: custom:mini-graph-card
+        entities:
+          - entity: sensor.ecotec_plus_flowtemp_temp
+            name: Vorlauf
+            show_points: false
+            line_width: 1
+          - entity: sensor.ecotec_plus_returntemp_temp
+            name: Rücklauf
+            show_points: false
+            line_width: 1
+        hours_to_show: 8
+        points_per_hour: 24
+        animate: false
+        hour24: true
+        upper_bound: 35
+      - type: thermostat
+        entity: climate.vaillant_ecotec_plus_warmwasser
+        features:
+          - style: icons
+            hvac_modes:
+              - heat
+              - 'off'
+              - auto
+            type: climate-hvac-modes
+        show_current_as_primary: true
+      - type: horizontal-stack
+        cards:
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: sensor.multimatic_700_hc1pumpstatus
+                state: '1'
+              - condition: or
+                conditions:
+                  - condition: state
+                    entity: sensor.multimatic_700_hc1pumpstatus
+                    state: '1'
+                  - condition: state
+                    entity: select.multimatic_700_hwcsfmode_sfmode
+                    state: load
+            card:
+              type: custom:mushroom-entity-card
+              entity: switch.speicher_fullen
+              fill_container: false
+              layout: vertical
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: sensor.multimatic_700_hc1pumpstatus
+                state: '0'
+              - condition: state
+                entity: select.multimatic_700_hwcsfmode_sfmode
+                state: auto
+            card:
+              type: custom:mushroom-template-card
+              primary: Speicher wird geheizt
+              secondary: ''
+              icon: mdi:water-boiler-auto
+              layout: vertical
+      - type: custom:mini-graph-card
+        entities:
+          - entity: sensor.ebusd_vr_71_sensordata1_s5
+            name: Speichertemperatur Gas
+            show_points: false
+            line_width: 1
+          - entity: sensor.ebusd_vr_71_sensordata1_s6
+            name: Speichertemperatur Solar
+            show_points: false
+            line_width: 1
+          - entity: sensor.ebusd_vr_71_sensordata1_s7
+            name: Solar Temperatur
+            show_points: false
+            line_width: 1
+        hours_to_show: 8
+        points_per_hour: 24
+        lower_bound: 10
+        animate: false
+        hour24: true
+      - type: picture-elements
+        elements:
+          - type: state-label
+            entity: sensor.ebusd_vr_71_sensordata1_s7
+            style:
+              top: 27%
+              left: 92%
+              color: black
+              text-shadow: 0px 5px 10px
+            title: Solar Temperatur
+          - type: state-label
+            entity: sensor.ebusd_vr_71_sensordata1_s5
+            style:
+              top: 45%
+              left: 71.5%
+              color: black
+              text-shadow: 0px 5px 10px
+            title: Warmwasserspeicher Temperatur
+          - type: state-label
+            entity: sensor.ebusd_vr_71_sensordata1_s6
+            style:
+              top: 95%
+              left: 71.5%
+              color: black
+              text-shadow: 0px 5px 10px
+            title: Solarspeicher Temperatur
+          - type: state-label
+            entity: sensor.ecotec_plus_flowtemp_temp
+            style:
+              top: 62%
+              left: 25%
+              color: black
+              text-shadow: 0px 5px 10px
+            title: Vorlauftemperatur
+            prefix: 'Vorl. '
+          - type: state-label
+            entity: sensor.ecotec_plus_returntemp_temp
+            style:
+              top: 62%
+              left: 44%
+              color: black
+              text-shadow: 0px 5px 10px
+            title: Rücklauftemperatur
+            prefix: 'Rückl. '
+          - type: state-label
+            entity: sensor.durchschnittliche_raumtemperatur
+            style:
+              top: 15%
+              left: 34.6%
+              color: black
+              text-shadow: 0px 5px 10px
+            title: Haustemperatur
+        image: /local/vaillant_graph.jpeg
