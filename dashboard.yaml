@@ -15,7 +15,6 @@ views:
               - heat
               - 'off'
               - auto
-              - cool
             type: climate-hvac-modes
         show_current_as_primary: true
       - type: custom:mini-graph-card
@@ -38,7 +37,6 @@ views:
         features:
           - style: icons
             hvac_modes:
-              - heat
               - 'off'
               - auto
             type: climate-hvac-modes
